@@ -8,8 +8,8 @@
 </template>
 
 <script setup>
-import Hero from '@/components/Hero.vue'
-import About from '@/components/About.vue'
-import MenuSection from '@/components/MenuSection.vue'
-import Reservation from '@/components/Reservation.vue'
+import Hero from '@/components/landing/Hero.vue'
+import About from '@/components/landing/About.vue'
+import MenuSection from '@/components/landing/MenuSection.vue'
+import Reservation from '@/components/landing/Reservation.vue'
 </script>
