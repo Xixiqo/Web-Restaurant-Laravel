@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -122,6 +123,57 @@ class AuthController extends Controller
     }
 
     /**
+     * Update the authenticated user's profile.
+     * PUT /api/profile
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'Profile updated successfully.',
+            'user'    => $this->formatUser($user->fresh()),
+        ]);
+    }
+
+    /**
+     * Change the authenticated user's password.
+     * PUT /api/profile/password
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'current_password' => 'required|string',
+            'password'         => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($validated['current_password'], $user->password)) {
+            return response()->json([
+                'message' => 'Current password is incorrect.',
+                'errors'  => ['current_password' => ['Current password is incorrect.']],
+            ], 422);
+        }
+
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return response()->json([
+            'message' => 'Password changed successfully.',
+        ]);
+    }
+
+    /**
      * Format user data for response.
      */
     private function formatUser(User $user): array
@@ -130,6 +182,7 @@ class AuthController extends Controller
             'id'    => $user->id,
             'name'  => $user->name,
             'email' => $user->email,
+            'phone' => $user->phone,
             'role'  => $user->role,
         ];
     }

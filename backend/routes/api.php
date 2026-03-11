@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\UserController;
@@ -23,15 +24,26 @@ Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 Route::get('/products',      [ProductController::class, 'index']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 
+// ─── Xendit Callback (public webhook) ───────────────────────────────
+Route::post('/xendit/callback', [PaymentController::class, 'handleCallback']);
+
 // ─── Authenticated User Routes ──────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me',      [AuthController::class, 'me']);
 
+    // Profile
+    Route::put('/profile',          [AuthController::class, 'updateProfile']);
+    Route::put('/profile/password', [AuthController::class, 'changePassword']);
+
     // Orders (user)
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders',  [OrderController::class, 'userOrders']);
+
+    // Payments
+    Route::post('/payments/{orderId}/pay', [PaymentController::class, 'createInvoice']);
+    Route::get('/payments/{orderId}/status', [PaymentController::class, 'checkStatus']);
 
     // Reservations (user)
     Route::post('/reservations', [ReservationController::class, 'store']);

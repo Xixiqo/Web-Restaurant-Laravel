@@ -17,7 +17,23 @@ class Order extends Model
         'total_price',
         'status',
         'notes',
+        'payment_method',
+        'payment_status',
+        'payment_channel',
+        'xendit_invoice_id',
+        'xendit_payment_url',
+        'paid_at',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'paid_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the user that placed this order.

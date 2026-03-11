@@ -138,7 +138,7 @@
             v-if="checkingOut"
             class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
           ></div>
-          {{ checkingOut ? 'Placing Order...' : 'Place Order' }}
+          {{ checkingOut ? 'Processing...' : 'Proceed to Payment' }}
         </button>
         <button
           @click="clearCart"
@@ -171,11 +171,16 @@ async function handleCheckout() {
       product_id: item.product.id,
       quantity: item.quantity,
     }))
-    await createOrder({ items, notes: orderNotes.value || null })
+    const res = await createOrder({ items, notes: orderNotes.value || null })
+    const orderId = res.data.order?.id
     clearCart()
     orderNotes.value = ''
     emit('close')
-    router.push('/orders')
+    if (orderId) {
+      router.push(`/payment/${orderId}`)
+    } else {
+      router.push('/orders')
+    }
   } catch (err) {
     alert(err.response?.data?.message || 'Failed to place order. Please try again.')
   } finally {

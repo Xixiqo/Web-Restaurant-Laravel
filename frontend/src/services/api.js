@@ -77,4 +77,12 @@ export const getAdminDashboard = () => api.get('/admin/dashboard')
 // ─── Reservation API Functions ─────────────────────────────────────
 export const createReservation = (data) => api.post('/reservations', data)
 
+// ─── Payment API Functions ─────────────────────────────────────────
+export const createPayment = (orderId) => api.post(`/payments/${orderId}/pay`)
+export const checkPaymentStatus = (orderId) => api.get(`/payments/${orderId}/status`)
+
+// ─── Profile API Functions ─────────────────────────────────────────
+export const updateProfile = (data) => api.put('/profile', data)
+export const changePassword = (data) => api.put('/profile/password', data)
+
 export default api

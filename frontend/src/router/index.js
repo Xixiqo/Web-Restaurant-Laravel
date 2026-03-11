@@ -43,6 +43,18 @@ const router = createRouter({
       component: () => import('../views/UserOrdersView.vue'),
       meta: { requireAuth: true },
     },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/ProfileView.vue'),
+      meta: { requireAuth: true },
+    },
+    {
+      path: '/payment/:orderId',
+      name: 'payment',
+      component: () => import('../views/PaymentView.vue'),
+      meta: { requireAuth: true },
+    },
 
     // ─── Admin Routes ────────────────────────────────────
     {
@@ -83,7 +95,7 @@ const router = createRouter({
 })
 
 // Navigation Guards
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const { isAuthenticated, isAdmin, initAuth, token } = useAuth()
 
   // Initialize auth if token exists but user not loaded yet
@@ -93,20 +105,18 @@ router.beforeEach(async (to, from, next) => {
 
   // Guest only routes (login, register)
   if (to.meta.guestOnly && isAuthenticated.value) {
-    return next('/')
+    return '/'
   }
 
   // Requires authentication
   if (to.meta.requireAuth && !isAuthenticated.value) {
-    return next('/login')
+    return '/login'
   }
 
   // Requires admin
   if (to.meta.requireAdmin && (!isAuthenticated.value || !isAdmin.value)) {
-    return next('/admin/login')
+    return '/admin/login'
   }
-
-  next()
 })
 
 export default router

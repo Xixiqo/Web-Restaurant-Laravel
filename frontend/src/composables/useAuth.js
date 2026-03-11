@@ -98,6 +98,16 @@ async function initAuth() {
   }
 }
 
+/**
+ * Update user profile (name, email, phone).
+ */
+async function updateUserProfile(data) {
+  const { updateProfile } = await import('@/services/api')
+  const res = await updateProfile(data)
+  user.value = res.data.user
+  return res.data
+}
+
 export function useAuth() {
   return {
     user,
@@ -111,5 +121,6 @@ export function useAuth() {
     fetchUser,
     initAuth,
     clearAuth,
+    updateUserProfile,
   }
 }

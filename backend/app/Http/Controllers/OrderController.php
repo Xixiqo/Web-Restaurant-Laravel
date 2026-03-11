@@ -120,11 +120,16 @@ class OrderController extends Controller
     private function formatOrder(Order $order, bool $includeUser = false): array
     {
         $data = [
-            'id'          => $order->id,
-            'total_price' => (float) $order->total_price,
-            'status'      => $order->status,
-            'notes'       => $order->notes,
-            'items'       => $order->items->map(function ($item) {
+            'id'                 => $order->id,
+            'total_price'        => (float) $order->total_price,
+            'status'             => $order->status,
+            'notes'              => $order->notes,
+            'payment_status'     => $order->payment_status ?? 'unpaid',
+            'payment_method'     => $order->payment_method,
+            'payment_channel'    => $order->payment_channel,
+            'xendit_payment_url' => $order->xendit_payment_url,
+            'paid_at'            => $order->paid_at,
+            'items'              => $order->items->map(function ($item) {
                 return [
                     'id'         => $item->id,
                     'product_id' => $item->product_id,
@@ -137,8 +142,8 @@ class OrderController extends Controller
                     ] : null,
                 ];
             }),
-            'created_at'  => $order->created_at,
-            'updated_at'  => $order->updated_at,
+            'created_at'         => $order->created_at,
+            'updated_at'         => $order->updated_at,
         ];
 
         if ($includeUser && $order->user) {
