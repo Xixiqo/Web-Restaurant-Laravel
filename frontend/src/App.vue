@@ -1,19 +1,22 @@
 <template>
   <div class="min-h-screen flex flex-col font-sans">
-    <Navbar />
+    <!-- Show Navbar & Footer only on non-admin routes -->
+    <Navbar v-if="!isAdminRoute" />
     <main class="flex-grow">
       <RouterView />
     </main>
-    <Footer />
+    <Footer v-if="!isAdminRoute" />
   </div>
 </template>
 
 <script setup>
-import { RouterView } from 'vue-router'
+import { computed } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
+
+const route = useRoute()
+const isAdminRoute = computed(() => {
+  return route.path.startsWith('/admin') && route.path !== '/admin/login'
+})
 </script>
-  
-<style>
-/* Using Tailwind for all styling */
-</style>
