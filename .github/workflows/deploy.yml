@@ -105,6 +105,8 @@ jobs:
     runs-on: self-hosted
     timeout-minutes: 30
     needs: validate
+    env:
+      DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}
 
     if: >
       github.event_name == 'push' &&
@@ -123,26 +125,26 @@ jobs:
       - name: Build backend image
         run: |
           docker build \
-            -t ${{ secrets.DOCKER_REPOSITORY }}/backend:${{ github.sha }} \
-            -t ${{ secrets.DOCKER_REPOSITORY }}/backend:latest \
+            -t ${{ env.DOCKER_REPOSITORY }}/backend:${{ github.sha }} \
+            -t ${{ env.DOCKER_REPOSITORY }}/backend:latest \
             ./backend
 
       - name: Build frontend image
         run: |
           docker build \
-            -t ${{ secrets.DOCKER_REPOSITORY }}/frontend:${{ github.sha }} \
-            -t ${{ secrets.DOCKER_REPOSITORY }}/frontend:latest \
+            -t ${{ env.DOCKER_REPOSITORY }}/frontend:${{ github.sha }} \
+            -t ${{ env.DOCKER_REPOSITORY }}/frontend:latest \
             ./frontend
 
       - name: Push backend image
         run: |
-          docker push ${{ secrets.DOCKER_REPOSITORY }}/backend:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_REPOSITORY }}/backend:latest
+          docker push ${{ env.DOCKER_REPOSITORY }}/backend:${{ github.sha }}
+          docker push ${{ env.DOCKER_REPOSITORY }}/backend:latest
 
       - name: Push frontend image
         run: |
-          docker push ${{ secrets.DOCKER_REPOSITORY }}/frontend:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_REPOSITORY }}/frontend:latest
+          docker push ${{ env.DOCKER_REPOSITORY }}/frontend:${{ github.sha }}
+          docker push ${{ env.DOCKER_REPOSITORY }}/frontend:latest
 
       - name: Pull newest images
         run: docker compose pull --quiet
