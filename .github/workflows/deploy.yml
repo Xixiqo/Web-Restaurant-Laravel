@@ -54,11 +54,11 @@ jobs:
 
       # Uncomment jika project membutuhkan .env saat testing
       #
-      # - name: Prepare Laravel environment
-      #   working-directory: backend
-      #   run: |
-      #     cp .env.example .env
-      #     php artisan key:generate
+      - name: Prepare Laravel environment
+        working-directory: backend
+        run: |
+          cp .env.example .env
+          php artisan key:generate
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
