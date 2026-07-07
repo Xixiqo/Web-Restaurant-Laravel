@@ -4,7 +4,7 @@
  * Persists token in localStorage and auto-fetches user on init.
  */
 import { ref, computed } from 'vue'
-import api, { apiLogin, apiRegister, apiAdminLogin, apiLogout, apiGetMe } from '@/services/api'
+import { apiLogin, apiRegister, apiAdminLogin, apiLogout, apiGetMe } from '@/services/api'
 import router from '@/router'
 
 const user = ref(null)
