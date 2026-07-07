@@ -72,6 +72,9 @@ export const updateOrderStatus = (id, data) => api.patch(`/admin/orders/${id}/st
 
 // ─── User API Functions (Admin) ────────────────────────────────────
 export const getAdminUsers = () => api.get('/admin/users')
+export const createAdminUser = (data) => api.post('/admin/users', data)
+export const updateAdminUser = (id, data) => api.put(`/admin/users/${id}`, data)
+export const deleteAdminUser = (id) => api.delete(`/admin/users/${id}`)
 export const getAdminDashboard = () => api.get('/admin/dashboard')
 
 // ─── Reservation API Functions ─────────────────────────────────────

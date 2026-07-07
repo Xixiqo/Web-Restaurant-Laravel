@@ -64,6 +64,10 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/orders',                  [OrderController::class, 'index']);
     Route::patch('/orders/{id}/status',    [OrderController::class, 'updateStatus']);
 
-    // User management
-    Route::get('/users', [UserController::class, 'index']);
+    // User management (CRUD)
+    Route::get('/users',          [UserController::class, 'index']);
+    Route::post('/users',         [UserController::class, 'store']);
+    Route::get('/users/{id}',     [UserController::class, 'show']);
+    Route::put('/users/{id}',     [UserController::class, 'update']);
+    Route::delete('/users/{id}',  [UserController::class, 'destroy']);
 });
