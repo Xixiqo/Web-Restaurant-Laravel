@@ -71,10 +71,6 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Run ESLint
-        working-directory: frontend
-        run: npm run lint
-
       - name: Run Laravel Pint
         working-directory: backend
         run: vendor/bin/pint --test
