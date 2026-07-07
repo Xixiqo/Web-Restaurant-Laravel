@@ -77,10 +77,11 @@ jobs:
 
       - name: Run PHPStan / Larastan
         working-directory: backend
-        run: vendor/bin/phpstan analyse \
-          --configuration=phpstan.neon \
-          --no-progress \
-          --ansi
+        run: |
+          vendor/bin/phpstan analyse \
+            --configuration=phpstan.neon \
+            --no-progress \
+            --ansi
 
       - name: Run Unit Tests
         working-directory: backend
