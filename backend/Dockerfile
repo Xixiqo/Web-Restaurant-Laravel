@@ -1,7 +1,7 @@
 # ==========================
 # Stage 1 - Install Composer Dependencies
 # ==========================
-FROM composer:2.8-alpine AS vendor
+FROM composer:2.8 AS vendor
 
 WORKDIR /app
 
