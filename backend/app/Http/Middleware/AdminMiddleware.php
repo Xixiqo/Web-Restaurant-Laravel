@@ -16,7 +16,7 @@ class AdminMiddleware
     {
         $user = auth('sanctum')->user();
 
-        if (!$user || !$user->isAdmin()) {
+        if (! $user || ! $user->isAdmin()) {
             return response()->json([
                 'message' => 'Unauthorized. Admin access only.',
             ], 403);

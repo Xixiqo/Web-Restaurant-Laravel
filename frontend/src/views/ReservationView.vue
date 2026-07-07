@@ -43,7 +43,7 @@
         </p>
         <button
           @click="
-            success = false
+            success = false;
             resetForm()
           "
           class="mt-4 text-[var(--color-accent-orange)] hover:underline cursor-pointer"

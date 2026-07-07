@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Services\XenditService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
@@ -31,9 +31,9 @@ class PaymentController extends Controller
         }
 
         // Only allow payment for unpaid or failed/expired orders
-        if (!in_array($order->payment_status, ['unpaid', 'failed', 'expired'])) {
+        if (! in_array($order->payment_status, ['unpaid', 'failed', 'expired'])) {
             return response()->json([
-                'message' => 'This order cannot be paid. Current status: ' . $order->payment_status,
+                'message' => 'This order cannot be paid. Current status: '.$order->payment_status,
             ], 422);
         }
 
@@ -41,16 +41,16 @@ class PaymentController extends Controller
             $result = $this->xenditService->createInvoice($order, $request->user());
 
             $order->update([
-                'payment_method'     => 'xendit',
-                'payment_status'     => 'pending',
-                'xendit_invoice_id'  => $result['invoice_id'],
+                'payment_method' => 'xendit',
+                'payment_status' => 'pending',
+                'xendit_invoice_id' => $result['invoice_id'],
                 'xendit_payment_url' => $result['invoice_url'],
             ]);
 
             return response()->json([
-                'message'     => 'Payment invoice created.',
+                'message' => 'Payment invoice created.',
                 'payment_url' => $result['invoice_url'],
-                'invoice_id'  => $result['invoice_id'],
+                'invoice_id' => $result['invoice_id'],
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -67,21 +67,22 @@ class PaymentController extends Controller
     {
         // Verify callback token
         $callbackToken = $request->header('X-CALLBACK-TOKEN', '');
-        if (!$this->xenditService->verifyCallbackToken($callbackToken)) {
+        if (! $this->xenditService->verifyCallbackToken($callbackToken)) {
             Log::warning('Xendit callback: invalid token', [
                 'token' => $callbackToken,
             ]);
+
             return response()->json(['message' => 'Invalid callback token.'], 403);
         }
 
-        $externalId     = $request->input('external_id');
-        $status         = $request->input('status');
+        $externalId = $request->input('external_id');
+        $status = $request->input('status');
         $paymentChannel = $request->input('payment_channel');
-        $paidAt         = $request->input('paid_at');
+        $paidAt = $request->input('paid_at');
 
         Log::info('Xendit callback received', [
-            'external_id'     => $externalId,
-            'status'          => $status,
+            'external_id' => $externalId,
+            'status' => $status,
             'payment_channel' => $paymentChannel,
         ]);
 
@@ -93,20 +94,20 @@ class PaymentController extends Controller
         $orderId = $parts[1];
 
         $order = Order::find($orderId);
-        if (!$order) {
+        if (! $order) {
             return response()->json(['message' => 'Order not found.'], 404);
         }
 
         // Map Xendit status to our payment_status
         $paymentStatus = match (strtoupper($status)) {
             'PAID', 'SETTLED' => 'paid',
-            'EXPIRED'         => 'expired',
-            'FAILED'          => 'failed',
-            default           => 'pending',
+            'EXPIRED' => 'expired',
+            'FAILED' => 'failed',
+            default => 'pending',
         };
 
         $updateData = [
-            'payment_status'  => $paymentStatus,
+            'payment_status' => $paymentStatus,
             'payment_channel' => $paymentChannel,
         ];
 
@@ -133,9 +134,9 @@ class PaymentController extends Controller
             return response()->json(['message' => 'Unauthorized.'], 403);
         }
 
-        if (!$order->xendit_invoice_id) {
+        if (! $order->xendit_invoice_id) {
             return response()->json([
-                'message'        => 'No payment invoice found.',
+                'message' => 'No payment invoice found.',
                 'payment_status' => $order->payment_status ?? 'unpaid',
             ]);
         }
@@ -145,32 +146,32 @@ class PaymentController extends Controller
 
             $paymentStatus = match (strtoupper($invoiceStatus['status'])) {
                 'PAID', 'SETTLED' => 'paid',
-                'EXPIRED'         => 'expired',
-                'FAILED'          => 'failed',
-                'PENDING'         => 'pending',
-                default           => $order->payment_status,
+                'EXPIRED' => 'expired',
+                'FAILED' => 'failed',
+                'PENDING' => 'pending',
+                default => $order->payment_status,
             };
 
             $updateData = [
-                'payment_status'  => $paymentStatus,
+                'payment_status' => $paymentStatus,
                 'payment_channel' => $invoiceStatus['payment_method'] ?? $order->payment_channel,
             ];
 
-            if ($paymentStatus === 'paid' && !$order->paid_at) {
+            if ($paymentStatus === 'paid' && ! $order->paid_at) {
                 $updateData['paid_at'] = now();
             }
 
             $order->update($updateData);
 
             return response()->json([
-                'message'         => 'Payment status checked.',
-                'payment_status'  => $paymentStatus,
+                'message' => 'Payment status checked.',
+                'payment_status' => $paymentStatus,
                 'payment_channel' => $updateData['payment_channel'],
-                'paid_at'         => $order->fresh()->paid_at,
+                'paid_at' => $order->fresh()->paid_at,
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message'        => 'Failed to check payment status.',
+                'message' => 'Failed to check payment status.',
                 'payment_status' => $order->payment_status,
             ], 500);
         }

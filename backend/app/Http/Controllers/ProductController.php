@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -30,11 +30,11 @@ class ProductController extends Controller
     {
         // Validate incoming request
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'price'       => 'required|numeric|min:0',
-            'rating'      => 'nullable|numeric|min:0|max:5',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'price' => 'required|numeric|min:0',
+            'rating' => 'nullable|numeric|min:0|max:5',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Handle image upload if provided
@@ -69,17 +69,17 @@ class ProductController extends Controller
 
         // Validate incoming request
         $validated = $request->validate([
-            'name'        => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
-            'price'       => 'sometimes|required|numeric|min:0',
-            'rating'      => 'nullable|numeric|min:0|max:5',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'price' => 'sometimes|required|numeric|min:0',
+            'rating' => 'nullable|numeric|min:0|max:5',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Handle image upload — delete old image if replacing
         if ($request->hasFile('image')) {
             // Delete old image from storage if it was a local file
-            if ($product->image && !str_starts_with($product->image, 'http')) {
+            if ($product->image && ! str_starts_with($product->image, 'http')) {
                 Storage::disk('public')->delete($product->image);
             }
             $validated['image'] = $request->file('image')->store('products', 'public');
@@ -100,7 +100,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         // Delete image from storage if it was a local file
-        if ($product->image && !str_starts_with($product->image, 'http')) {
+        if ($product->image && ! str_starts_with($product->image, 'http')) {
             Storage::disk('public')->delete($product->image);
         }
 
@@ -116,14 +116,14 @@ class ProductController extends Controller
     private function formatProduct(Product $product): array
     {
         return [
-            'id'          => $product->id,
-            'name'        => $product->name,
+            'id' => $product->id,
+            'name' => $product->name,
             'description' => $product->description,
-            'image'       => $product->image_url, // Use the accessor for full URL
-            'price'       => (float) $product->price,
-            'rating'      => (float) $product->rating,
-            'created_at'  => $product->created_at,
-            'updated_at'  => $product->updated_at,
+            'image' => $product->image_url, // Use the accessor for full URL
+            'price' => (float) $product->price,
+            'rating' => (float) $product->rating,
+            'created_at' => $product->created_at,
+            'updated_at' => $product->updated_at,
         ];
     }
 }

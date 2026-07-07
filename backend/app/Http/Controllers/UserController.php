@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -19,7 +19,7 @@ class UserController extends Controller
         $users = User::withCount('orders')
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(fn(User $user) => $this->formatUser($user));
+            ->map(fn (User $user) => $this->formatUser($user));
 
         return response()->json($users);
     }
@@ -31,19 +31,19 @@ class UserController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role'     => ['required', Rule::in(['user', 'sub-admin'])],
-            'phone'    => 'nullable|string|max:20',
+            'role' => ['required', Rule::in(['user', 'sub-admin'])],
+            'phone' => 'nullable|string|max:20',
         ]);
 
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role'     => $validated['role'],
-            'phone'    => $validated['phone'] ?? null,
+            'role' => $validated['role'],
+            'phone' => $validated['phone'] ?? null,
         ]);
 
         // Load orders_count
@@ -51,7 +51,7 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User account created successfully.',
-            'user'    => $this->formatUser($user),
+            'user' => $this->formatUser($user),
         ], 201);
     }
 
@@ -82,21 +82,21 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role'     => ['required', Rule::in(['user', 'sub-admin'])],
-            'phone'    => 'nullable|string|max:20',
+            'name' => 'required|string|max:255',
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'role' => ['required', Rule::in(['user', 'sub-admin'])],
+            'phone' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         $updateData = [
-            'name'  => $validated['name'],
+            'name' => $validated['name'],
             'email' => $validated['email'],
-            'role'  => $validated['role'],
+            'role' => $validated['role'],
             'phone' => $validated['phone'] ?? null,
         ];
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $updateData['password'] = Hash::make($validated['password']);
         }
 
@@ -105,7 +105,7 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User updated successfully.',
-            'user'    => $this->formatUser($user->fresh()->loadCount('orders')),
+            'user' => $this->formatUser($user->fresh()->loadCount('orders')),
         ]);
     }
 
@@ -143,13 +143,13 @@ class UserController extends Controller
     private function formatUser(User $user): array
     {
         return [
-            'id'           => $user->id,
-            'name'         => $user->name,
-            'email'        => $user->email,
-            'phone'        => $user->phone,
-            'role'         => $user->role,
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'role' => $user->role,
             'orders_count' => $user->orders_count ?? 0,
-            'created_at'   => $user->created_at,
+            'created_at' => $user->created_at,
         ];
     }
 }

@@ -42,7 +42,7 @@ class Product extends Model
      */
     public function getImageUrlAttribute(): ?string
     {
-        if (!$this->image) {
+        if (! $this->image) {
             return null;
         }
 
@@ -52,6 +52,6 @@ class Product extends Model
         }
 
         // Otherwise, return storage URL for uploaded files
-        return url('storage/' . $this->image);
+        return url('storage/'.$this->image);
     }
 }

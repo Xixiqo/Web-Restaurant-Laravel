@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -19,22 +19,22 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role'     => 'user',
+            'role' => 'user',
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
-            'user'  => $this->formatUser($user),
+            'user' => $this->formatUser($user),
             'token' => $token,
         ], 201);
     }
@@ -46,21 +46,21 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $request->validate([
-            'email'    => 'required|string|email',
+            'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        $user  = User::where('email', $request->email)->firstOrFail();
+        $user = User::where('email', $request->email)->firstOrFail();
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
-            'user'  => $this->formatUser($user),
+            'user' => $this->formatUser($user),
             'token' => $token,
         ]);
     }
@@ -72,11 +72,11 @@ class AuthController extends Controller
     public function adminLogin(Request $request): JsonResponse
     {
         $request->validate([
-            'email'    => 'required|string|email',
+            'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -84,7 +84,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->firstOrFail();
 
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             return response()->json([
                 'message' => 'Unauthorized. Admin access only.',
             ], 403);
@@ -93,7 +93,7 @@ class AuthController extends Controller
         $token = $user->createToken('admin-token')->plainTextToken;
 
         return response()->json([
-            'user'  => $this->formatUser($user),
+            'user' => $this->formatUser($user),
             'token' => $token,
         ]);
     }
@@ -131,7 +131,7 @@ class AuthController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'name'  => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => 'nullable|string|max:20',
         ]);
@@ -140,7 +140,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Profile updated successfully.',
-            'user'    => $this->formatUser($user->fresh()),
+            'user' => $this->formatUser($user->fresh()),
         ]);
     }
 
@@ -152,15 +152,15 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'current_password' => 'required|string',
-            'password'         => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = $request->user();
 
-        if (!Hash::check($validated['current_password'], $user->password)) {
+        if (! Hash::check($validated['current_password'], $user->password)) {
             return response()->json([
                 'message' => 'Current password is incorrect.',
-                'errors'  => ['current_password' => ['Current password is incorrect.']],
+                'errors' => ['current_password' => ['Current password is incorrect.']],
             ], 422);
         }
 
@@ -179,11 +179,11 @@ class AuthController extends Controller
     private function formatUser(User $user): array
     {
         return [
-            'id'    => $user->id,
-            'name'  => $user->name,
+            'id' => $user->id,
+            'name' => $user->name,
             'email' => $user->email,
             'phone' => $user->phone,
-            'role'  => $user->role,
+            'role' => $user->role,
         ];
     }
 }

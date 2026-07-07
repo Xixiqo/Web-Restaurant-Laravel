@@ -17,11 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 // ─── Public Auth Routes ─────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login',    [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 
 // ─── Public Product Routes ──────────────────────────────────────────
-Route::get('/products',      [ProductController::class, 'index']);
+Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 
 // ─── Xendit Callback (public webhook) ───────────────────────────────
@@ -31,15 +31,15 @@ Route::post('/xendit/callback', [PaymentController::class, 'handleCallback']);
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me',      [AuthController::class, 'me']);
+    Route::get('/me', [AuthController::class, 'me']);
 
     // Profile
-    Route::put('/profile',          [AuthController::class, 'updateProfile']);
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::put('/profile/password', [AuthController::class, 'changePassword']);
 
     // Orders (user)
     Route::post('/orders', [OrderController::class, 'store']);
-    Route::get('/orders',  [OrderController::class, 'userOrders']);
+    Route::get('/orders', [OrderController::class, 'userOrders']);
 
     // Payments
     Route::post('/payments/{orderId}/pay', [PaymentController::class, 'createInvoice']);
@@ -55,19 +55,19 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Product management (create, update, delete)
-    Route::post('/products',          [ProductController::class, 'store']);
-    Route::put('/products/{id}',      [ProductController::class, 'update']);
-    Route::post('/products/{id}',     [ProductController::class, 'update']); // for multipart _method=PUT
-    Route::delete('/products/{id}',   [ProductController::class, 'destroy']);
+    Route::post('/products', [ProductController::class, 'store']);
+    Route::put('/products/{id}', [ProductController::class, 'update']);
+    Route::post('/products/{id}', [ProductController::class, 'update']); // for multipart _method=PUT
+    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 
     // Order management
-    Route::get('/orders',                  [OrderController::class, 'index']);
-    Route::patch('/orders/{id}/status',    [OrderController::class, 'updateStatus']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 
     // User management (CRUD)
-    Route::get('/users',          [UserController::class, 'index']);
-    Route::post('/users',         [UserController::class, 'store']);
-    Route::get('/users/{id}',     [UserController::class, 'show']);
-    Route::put('/users/{id}',     [UserController::class, 'update']);
-    Route::delete('/users/{id}',  [UserController::class, 'destroy']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
 });

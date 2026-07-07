@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
@@ -18,10 +17,10 @@ class OrderController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'items'              => 'required|array|min:1',
+            'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity'   => 'required|integer|min:1',
-            'notes'              => 'nullable|string|max:500',
+            'items.*.quantity' => 'required|integer|min:1',
+            'notes' => 'nullable|string|max:500',
         ]);
 
         return DB::transaction(function () use ($request, $validated) {
@@ -30,21 +29,21 @@ class OrderController extends Controller
 
             foreach ($validated['items'] as $item) {
                 $product = Product::findOrFail($item['product_id']);
-                $itemPrice   = $product->price * $item['quantity'];
+                $itemPrice = $product->price * $item['quantity'];
                 $totalPrice += $itemPrice;
 
                 $orderItems[] = [
                     'product_id' => $product->id,
-                    'quantity'   => $item['quantity'],
-                    'price'      => $product->price,
+                    'quantity' => $item['quantity'],
+                    'price' => $product->price,
                 ];
             }
 
             $order = Order::create([
-                'user_id'     => $request->user()->id,
+                'user_id' => $request->user()->id,
                 'total_price' => $totalPrice,
-                'status'      => 'dipesan',
-                'notes'       => $validated['notes'] ?? null,
+                'status' => 'dipesan',
+                'notes' => $validated['notes'] ?? null,
             ]);
 
             foreach ($orderItems as $item) {
@@ -55,7 +54,7 @@ class OrderController extends Controller
 
             return response()->json([
                 'message' => 'Order placed successfully.',
-                'order'   => $this->formatOrder($order),
+                'order' => $this->formatOrder($order),
             ], 201);
         });
     }
@@ -70,7 +69,7 @@ class OrderController extends Controller
             ->with('items.product')
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(fn($order) => $this->formatOrder($order));
+            ->map(fn ($order) => $this->formatOrder($order));
 
         return response()->json($orders);
     }
@@ -89,7 +88,7 @@ class OrderController extends Controller
             $query->where('status', $request->status);
         }
 
-        $orders = $query->get()->map(fn($order) => $this->formatOrder($order, true));
+        $orders = $query->get()->map(fn ($order) => $this->formatOrder($order, true));
 
         return response()->json($orders);
     }
@@ -110,7 +109,7 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => 'Order status updated.',
-            'order'   => $this->formatOrder($order, true),
+            'order' => $this->formatOrder($order, true),
         ]);
     }
 
@@ -120,36 +119,36 @@ class OrderController extends Controller
     private function formatOrder(Order $order, bool $includeUser = false): array
     {
         $data = [
-            'id'                 => $order->id,
-            'total_price'        => (float) $order->total_price,
-            'status'             => $order->status,
-            'notes'              => $order->notes,
-            'payment_status'     => $order->payment_status ?? 'unpaid',
-            'payment_method'     => $order->payment_method,
-            'payment_channel'    => $order->payment_channel,
+            'id' => $order->id,
+            'total_price' => (float) $order->total_price,
+            'status' => $order->status,
+            'notes' => $order->notes,
+            'payment_status' => $order->payment_status ?? 'unpaid',
+            'payment_method' => $order->payment_method,
+            'payment_channel' => $order->payment_channel,
             'xendit_payment_url' => $order->xendit_payment_url,
-            'paid_at'            => $order->paid_at,
-            'items'              => $order->items->map(function ($item) {
+            'paid_at' => $order->paid_at,
+            'items' => $order->items->map(function ($item) {
                 return [
-                    'id'         => $item->id,
+                    'id' => $item->id,
                     'product_id' => $item->product_id,
-                    'quantity'   => $item->quantity,
-                    'price'      => (float) $item->price,
-                    'product'    => $item->product ? [
-                        'id'    => $item->product->id,
-                        'name'  => $item->product->name,
+                    'quantity' => $item->quantity,
+                    'price' => (float) $item->price,
+                    'product' => $item->product ? [
+                        'id' => $item->product->id,
+                        'name' => $item->product->name,
                         'image' => $item->product->image_url,
                     ] : null,
                 ];
             }),
-            'created_at'         => $order->created_at,
-            'updated_at'         => $order->updated_at,
+            'created_at' => $order->created_at,
+            'updated_at' => $order->updated_at,
         ];
 
         if ($includeUser && $order->user) {
             $data['user'] = [
-                'id'    => $order->user->id,
-                'name'  => $order->user->name,
+                'id' => $order->user->id,
+                'name' => $order->user->name,
                 'email' => $order->user->email,
             ];
         }

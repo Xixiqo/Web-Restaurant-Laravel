@@ -18,18 +18,18 @@ class DatabaseSeeder extends Seeder
     {
         // Admin user
         User::create([
-            'name'     => 'Admin',
-            'email'    => 'admin@sunuyhouse.com',
+            'name' => 'Admin',
+            'email' => 'admin@sunuyhouse.com',
             'password' => Hash::make('password'),
-            'role'     => 'admin',
+            'role' => 'admin',
         ]);
 
         // Test user
         User::create([
-            'name'     => 'Test User',
-            'email'    => 'test@example.com',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
             'password' => Hash::make('password'),
-            'role'     => 'user',
+            'role' => 'user',
         ]);
 
         // Seed products table with sample pizza data
