@@ -1,0 +1,13 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - app
+        - routes
+        - tests
+    tmpDir: storage/framework/cache/phpstan
+    checkMissingIterableValueType: false
+    ignoreErrors:
+        - '#Undefined array key#'
