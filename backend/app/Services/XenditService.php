@@ -6,8 +6,8 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Xendit\Configuration;
-use Xendit\Invoice\InvoiceApi;
 use Xendit\Invoice\CreateInvoiceRequest;
+use Xendit\Invoice\InvoiceApi;
 
 class XenditService
 {
@@ -16,7 +16,7 @@ class XenditService
     public function __construct()
     {
         Configuration::setXenditKey(config('services.xendit.secret_key'));
-        $this->invoiceApi = new InvoiceApi();
+        $this->invoiceApi = new InvoiceApi;
     }
 
     /**
@@ -26,40 +26,40 @@ class XenditService
      */
     public function createInvoice(Order $order, User $user): array
     {
-        $externalId = 'order-' . $order->id . '-' . time();
+        $externalId = 'order-'.$order->id.'-'.time();
 
         $items = $order->items->map(function ($item) {
             return [
-                'name'     => $item->product?->name ?? 'Product',
+                'name' => $item->product?->name ?? 'Product',
                 'quantity' => $item->quantity,
-                'price'    => (float) $item->price,
+                'price' => (float) $item->price,
             ];
         })->toArray();
 
         $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
 
         $createInvoiceRequest = new CreateInvoiceRequest([
-            'external_id'          => $externalId,
-            'amount'               => (float) $order->total_price,
-            'payer_email'          => $user->email,
-            'description'          => 'Sunuy House - Order #' . $order->id,
-            'currency'             => 'IDR',
-            'items'                => $items,
-            'success_redirect_url' => $frontendUrl . '/payment/' . $order->id . '?status=success',
-            'failure_redirect_url' => $frontendUrl . '/payment/' . $order->id . '?status=failed',
+            'external_id' => $externalId,
+            'amount' => (float) $order->total_price,
+            'payer_email' => $user->email,
+            'description' => 'Sunuy House - Order #'.$order->id,
+            'currency' => 'IDR',
+            'items' => $items,
+            'success_redirect_url' => $frontendUrl.'/payment/'.$order->id.'?status=success',
+            'failure_redirect_url' => $frontendUrl.'/payment/'.$order->id.'?status=failed',
         ]);
 
         try {
             $invoice = $this->invoiceApi->createInvoice($createInvoiceRequest);
 
             return [
-                'invoice_id'  => $invoice->getId(),
+                'invoice_id' => $invoice->getId(),
                 'invoice_url' => $invoice->getInvoiceUrl(),
             ];
         } catch (\Exception $e) {
             Log::error('Xendit invoice creation failed', [
                 'order_id' => $order->id,
-                'error'    => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
             throw $e;
         }
@@ -84,13 +84,13 @@ class XenditService
             $invoice = $this->invoiceApi->getInvoiceById($invoiceId);
 
             return [
-                'status'         => $invoice->getStatus(),
+                'status' => $invoice->getStatus(),
                 'payment_method' => $invoice->getPaymentMethod(),
             ];
         } catch (\Exception $e) {
             Log::error('Xendit get invoice failed', [
                 'invoice_id' => $invoiceId,
-                'error'      => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
             throw $e;
         }
