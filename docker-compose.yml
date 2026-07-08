@@ -1,6 +1,6 @@
 services:
   backend:
-    image: ${DOCKER_REPOSITORY}/backend:latest
+    image: ${DOCKER_REPOSITORY}/laravel-backend-apps:latest
     pull_policy: always
 
     volumes:
@@ -29,7 +29,7 @@ services:
       - app-network
 
   frontend:
-    image: ${DOCKER_REPOSITORY}/frontend:latest
+    image: ${DOCKER_REPOSITORY}/laravel-frontend-apps:latest
     pull_policy: always
 
     expose:
