@@ -150,7 +150,7 @@ jobs:
       - name: Push frontend image
         run: |
           docker push ${{ env.DOCKER_REPOSITORY }}/laravel-frontend-apps:${{ github.sha }}
-          docker push ${{ env.DOCKER_REPOSITORY }}/frontend:latest
+          docker push ${{ env.DOCKER_REPOSITORY }}/laravel-frontend-apps:latest
 
       - name: Pull newest images
         run: docker compose pull --quiet
