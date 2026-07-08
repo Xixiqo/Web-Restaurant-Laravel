@@ -27,13 +27,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ env.PHP_VERSION }}
-          coverage: none
-          extensions: mbstring, intl, pdo_mysql, zip
-          tools: composer:v2
+#      - name: Setup PHP
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: ${{ env.PHP_VERSION }}
+#          coverage: none
+#          extensions: mbstring, intl, pdo_mysql, zip
+#          tools: composer:v2
+
+      - name: Verify PHP environment
+        run: |
+          php -v
+          composer --version
+          php -m | grep -E "mbstring|intl|pdo_mysql|zip"
 
       - name: Cache Composer dependencies
         uses: actions/cache@v4
