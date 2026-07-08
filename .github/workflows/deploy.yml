@@ -144,12 +144,12 @@ jobs:
 
       - name: Push backend image
         run: |
-          docker push ${{ env.DOCKER_REPOSITORY }}/backend:${{ github.sha }}
-          docker push ${{ env.DOCKER_REPOSITORY }}/backend:latest
+          docker push ${{ env.DOCKER_REPOSITORY }}/laravel-backend-apps:${{ github.sha }}
+          docker push ${{ env.DOCKER_REPOSITORY }}/laravel-backend-apps:latest
 
       - name: Push frontend image
         run: |
-          docker push ${{ env.DOCKER_REPOSITORY }}/frontend:${{ github.sha }}
+          docker push ${{ env.DOCKER_REPOSITORY }}/laravel-frontend-apps:${{ github.sha }}
           docker push ${{ env.DOCKER_REPOSITORY }}/frontend:latest
 
       - name: Pull newest images
