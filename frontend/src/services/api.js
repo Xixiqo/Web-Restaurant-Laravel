@@ -8,7 +8,7 @@ import router from '@/router'
 
 // Base axios instance pointing to Laravel API
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: '/api',
   headers: {
     Accept: 'application/json',
   },
